@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Popup da Extensão</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+    }
+    h1 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 14px;
+      margin: 0;
+    }
+    label, input {
+      display: block;
+      margin-bottom: 10px;
+    }
+    .test-list {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Minha Extensão</h1>
+  <label for="username">Nome de Usuário:</label>
+  <input type="text" id="username" placeholder="Digite seu nome de usuário">
+  <button id="saveUser">Salvar Usuário</button>
+  <button id="viewTests">VER TESTES</button>
+  <div class="test-list" id="testList"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

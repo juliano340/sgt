@@ -1,0 +1,35 @@
+{
+    "manifest_version": 3,
+    "name": "Minha Extensão",
+    "version": "1.0",
+    "description": "Template básico para começar a desenvolver uma extensão do Chrome.",
+    "action": {
+      "default_popup": "popup.html",
+      "default_title": "Clique para abrir"
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "permissions": [
+      "activeTab",
+      "scripting",
+      "storage",
+      "http://localhost:3000/"  
+    ],
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": ["date-fns.min.js", "toastr.min.js", "toastr.min.css"],
+        "matches": ["<all_urls>"]
+      }
+    ],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'"
+    }
+  }
+  
