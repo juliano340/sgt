@@ -35,7 +35,7 @@
             text-align: left;
             display: block;
         }
-        input[type="text"] {
+        input[type="text"], select {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 20px;
@@ -65,9 +65,15 @@
 <body>
     <div class="container">
         <h1>Gestão de Testes</h1>
-        <label for="username">Nome de Usuário:</label>
-        <input type="text" id="username" placeholder="Digite seu nome de usuário">
-        <button id="saveUser">Salvar Usuário</button>
+        <label for="newUsername">Nome de Usuário:</label>
+        <input type="text" id="newUsername" placeholder="Digite o nome do usuário">
+        <button id="addUser">Adicionar Usuário</button>
+        
+        <label for="userSelect">Selecionar Usuário:</label>
+        <select id="userSelect">
+            <!-- Options serão adicionadas dinamicamente -->
+        </select>
+        
         <button id="openDashboard">Abrir Dashboard</button>
         <div class="test-list" id="testList"></div>
     </div>

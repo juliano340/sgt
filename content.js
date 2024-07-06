@@ -168,51 +168,39 @@ function initializeExtension() {
             if (editLink) {
                 const registerButton = document.createElement('a');
                 registerButton.innerText = '🧪 Novo teste';
-                
+
                 registerButton.addEventListener('click', () => {
                     console.log('Botão Registrar Teste clicado!');
 
                     // Mostrar confirmação antes de registrar o teste
                     createModal('Confirmar Registro de Teste', 'Você deseja registrar um novo teste?', () => {
                         // Recuperar usuário salvo
-                        fetch('http://localhost:3000/users')
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Erro ao recuperar usuários');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (data.users && data.users.length > 0) {
-                                    const user = data.users[0]; // Supondo que só há um usuário salvo para simplicidade
+                        const selectedUserId = localStorage.getItem('selectedUserId');
+                        console.log('Usuário selecionado:', selectedUserId); // Log para verificar o usuário selecionado
+                        if (!selectedUserId) {
+                            alert('Nenhum usuário selecionado. Por favor, selecione um usuário no popup da extensão.');
+                            return;
+                        }
 
-                                    // Registrar teste
-                                    fetch('http://localhost:3000/tests', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({ case_id: caseNumber[1], user_id: user.id })
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        console.log('Teste registrado com sucesso:', data);
-                                        const testIdText = `#TEST_ID:${data.id}`;
-                                        copyToClipboard(testIdText);
-                                        alert('Teste registrado com sucesso!');
-                                    })
-                                    .catch(error => {
-                                        console.error('Erro ao registrar teste:', error);
-                                        alert('Erro ao registrar teste.');
-                                    });
-                                } else {
-                                    alert('Nenhum usuário encontrado. Por favor, registre um usuário primeiro.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Erro ao recuperar usuário:', error);
-                                alert('Erro ao recuperar usuário.');
-                            });
+                        // Registrar teste
+                        fetch('http://localhost:3000/tests', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ case_id: caseNumber[1], user_id: selectedUserId })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Teste registrado com sucesso:', data);
+                            const testIdText = `#TEST_ID:${data.id}`;
+                            copyToClipboard(testIdText);
+                            alert('Teste registrado com sucesso!');
+                        })
+                        .catch(error => {
+                            console.error('Erro ao registrar teste:', error);
+                            alert('Erro ao registrar teste.');
+                        });
                     });
                 });
 
@@ -222,7 +210,7 @@ function initializeExtension() {
                 // Adicionar botão "VER TESTES" antes do link "Editar"
                 const viewTestsButton = document.createElement('a');
                 viewTestsButton.innerText = '📝 Ver testes';
-                
+
                 viewTestsButton.addEventListener('click', () => {
                     console.log('Botão VER TESTES clicado!');
 
@@ -283,3 +271,11 @@ function initializeExtension() {
 
 // Inicializar a extensão
 initializeExtension();
+
+// Ouvir mensagens do popup
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.selectedUserId) {
+        console.log('Usuário selecionado recebido:', request.selectedUserId);
+        localStorage.setItem('selectedUserId', request.selectedUserId);
+    }
+});
