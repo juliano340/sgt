@@ -67,13 +67,38 @@ function createModal(title, content, confirmCallback = null) {
     // Adicionar o modal ao corpo do documento
     document.body.appendChild(modal);
 
-    // Adicionar eventos de clique para os botões de exclusão
+    // Adicionar eventos de clique para os botões de exclusão e aprovação
     const deleteButtons = modal.querySelectorAll('.delete-test-button');
     deleteButtons.forEach(button => {
         button.addEventListener('click', (event) => {
             const testId = event.target.getAttribute('data-test-id');
             createModal('Confirmar Exclusão de Teste', 'Você deseja excluir este teste?', () => {
                 deleteTest(testId);
+            });
+        });
+    });
+
+    const approvalSelects = modal.querySelectorAll('.approval-status');
+    approvalSelects.forEach(select => {
+        select.addEventListener('change', (event) => {
+            const testId = event.target.getAttribute('data-test-id');
+            const approved = event.target.value === '' ? null : parseInt(event.target.value);
+
+            fetch(`http://localhost:3000/tests/${testId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ approved })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Teste atualizado com sucesso:', data);
+                alert('Status do teste atualizado com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar teste:', error);
+                alert('Erro ao atualizar teste.');
             });
         });
     });
@@ -213,6 +238,7 @@ function initializeExtension() {
                                                 <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">ID</th>
                                                 <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Usuário</th>
                                                 <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Data</th>
+                                                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Aprovado</th>
                                                 <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Ações</th>
                                             </tr>
                                         </thead>
@@ -224,6 +250,13 @@ function initializeExtension() {
                                             <td style="padding: 8px; border-bottom: 1px solid #ddd;">${test.id}</td>
                                             <td style="padding: 8px; border-bottom: 1px solid #ddd;">${test.username}</td>
                                             <td style="padding: 8px; border-bottom: 1px solid #ddd;">${formattedDate}</td>
+                                            <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                                                <select class="approval-status" data-test-id="${test.id}">
+                                                    <option value="" ${test.approved === null ? 'selected' : ''}>Não definido</option>
+                                                    <option value="1" ${test.approved === 1 ? 'selected' : ''}>Aprovado</option>
+                                                    <option value="0" ${test.approved === 0 ? 'selected' : ''}>Rejeitado</option>
+                                                </select>
+                                            </td>
                                             <td style="padding: 8px; border-bottom: 1px solid #ddd;"><button class="delete-test-button" data-test-id="${test.id}">Excluir</button></td>
                                         </tr>`;
                                 });
