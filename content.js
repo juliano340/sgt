@@ -84,7 +84,7 @@ function createModal(title, content, confirmCallback = null) {
             const testId = event.target.getAttribute('data-test-id');
             const approved = event.target.value === '' ? null : parseInt(event.target.value);
 
-            fetch(`http://localhost:3000/tests/${testId}`, {
+            fetch(`${API_BASE_URL}/tests/${testId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
@@ -129,7 +129,7 @@ function copyToClipboard(text) {
 
 // Função para excluir um teste
 function deleteTest(testId) {
-    fetch(`http://localhost:3000/tests/${testId}`, {
+    fetch(`${API_BASE_URL}/tests/${testId}`, {
         method: 'DELETE'
     })
     .then(response => response.json())
@@ -183,7 +183,7 @@ function initializeExtension() {
                         }
 
                         // Registrar teste
-                        fetch('http://localhost:3000/tests', {
+                        fetch(`${API_BASE_URL}/tests`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -215,7 +215,7 @@ function initializeExtension() {
                     console.log('Botão VER TESTES clicado!');
 
                     // Buscar e exibir testes relacionados ao caso
-                    fetch(`http://localhost:3000/tests?case_id=${caseNumber[1]}`)
+                    fetch(`${API_BASE_URL}/tests?case_id=${caseNumber[1]}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.tests && data.tests.length > 0) {

@@ -5,9 +5,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Função para carregar usuários no select
     function loadUsers() {
-        fetch('http://localhost:3000/users')
-            .then(response => response.json())
+        fetch(`${API_BASE_URL}/users`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro ao buscar usuários: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Usuários carregados:', data); // Adiciona um log para ver os dados carregados
                 userSelect.innerHTML = '';
                 data.users.forEach(user => {
                     const option = document.createElement('option');
@@ -46,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const newUsername = document.getElementById('newUsername').value;
         if (newUsername) {
             console.log('Tentando adicionar usuário:', newUsername);
-            fetch('http://localhost:3000/users', {
+            fetch(`${API_BASE_URL}/users`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -74,6 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     openDashboardButton.addEventListener('click', function () {
-        window.open('http://localhost:3000/dashboard', '_blank');
+        window.open(`${API_BASE_URL}/dashboard`, '_blank');
     });
 });
