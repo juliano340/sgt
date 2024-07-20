@@ -147,6 +147,18 @@ function deleteTest(testId) {
     });
 }
 
+// Função para pegar o nome do desenvolvedor
+function getDeveloperName() {
+    const developerElement = document.querySelector('.user_cf.cf_15.attribute .value a');
+    if (developerElement) {
+        return developerElement.innerText;
+    } else {
+        console.error('Elemento do desenvolvedor não encontrado.');
+        return 'Desenvolvedor não encontrado';
+    }
+}
+
+
 // Função principal para inicializar a extensão
 function initializeExtension() {
     console.log('Extensão inicializada');
@@ -182,13 +194,16 @@ function initializeExtension() {
                             return;
                         }
 
+                        const developerName = getDeveloperName();
+                        const caseId = caseNumber[1];
+
                         // Registrar teste
                         fetch(`${API_BASE_URL}/tests`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ case_id: caseNumber[1], user_id: selectedUserId })
+                            body: JSON.stringify({ case_id: caseId, user_id: selectedUserId, developer_name: developerName })
                         })
                         .then(response => response.json())
                         .then(data => {
@@ -225,6 +240,7 @@ function initializeExtension() {
                                             <tr>
                                                 <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">ID</th>
                                                 <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Usuário</th>
+                                                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Desenvolvedor</th>
                                                 <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Data</th>
                                                 <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Aprovado</th>
                                                 <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Ações</th>
@@ -237,6 +253,7 @@ function initializeExtension() {
                                         <tr id="test-item-${test.id}">
                                             <td style="padding: 8px; border-bottom: 1px solid #ddd;">${test.id}</td>
                                             <td style="padding: 8px; border-bottom: 1px solid #ddd;">${test.username}</td>
+                                            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${test.developer_name}</td>
                                             <td style="padding: 8px; border-bottom: 1px solid #ddd;">${formattedDate}</td>
                                             <td style="padding: 8px; border-bottom: 1px solid #ddd;">
                                                 <select class="approval-status" data-test-id="${test.id}">
